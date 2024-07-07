@@ -22,6 +22,27 @@ const createNewUser = async (req,res) =>{
     } catch (error) {
         res.status(400).json(error.message);
     }
+};
+
+const loginUser = async (req, res) =>{
+    try {
+        const {email, password} = req.body;
+
+        const user = await findUserByEmail(email);
+        if (!user){
+            return res.status(400).json({ error: "Usuario invalido"});
+        }
+
+        const loginOn = bcrypt.compareSync(password, user.password);
+        if(!loginOn){
+            return res.status(400).json({ error: "Contraseña incorrecta"});
+        }
+
+        const token = jwt.sign({email: user.email }, "secret_pass", {expiresIn: "1h"});
+        res.json({token});
+    } catch (error) {
+        res.status(500).json({ error: error.message});
+    }
 }
 
-export {createNewUser}
+export {createNewUser, loginUser}

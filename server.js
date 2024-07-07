@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import errorHandler from "./src/middleware/errorHandler";
+import router from "./src/routes/login.routes";
 import 'dotenv/config';
 
 
@@ -15,7 +16,7 @@ app.use(express.json());
 app.use(cors());
 
 //ROUTER
-app.use('/', routesLogin);
+app.use('/usuarios', router);
 
 // MANEJO DE ERRORES
 app.use(errorHandler);
