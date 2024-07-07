@@ -1,4 +1,4 @@
-import { findUserByEmail, createUser } from "../models/login.models";
+import { findUserByEmail, createUser } from "../models/login.models.js";
 
 const createNewUser = async (req,res) =>{
     try {

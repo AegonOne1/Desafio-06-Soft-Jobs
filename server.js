@@ -1,13 +1,13 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import router from "./src/routes/login.routes";
+import router from "./src/routes/login.routes.js";
 import 'dotenv/config';
 
 
 
 const app = express();
-const PORT = porcess.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 
 // MIDDLEWARES
