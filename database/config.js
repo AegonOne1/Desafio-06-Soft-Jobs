@@ -1,8 +1,7 @@
-import  pg  from "pg";
+import pg from "pg";
 import "dotenv/config";
 
-const {DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT} = process.env;
-
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT } = process.env;
 
 const pool = new pg.Pool({
     host: DB_HOST,
@@ -13,14 +12,12 @@ const pool = new pg.Pool({
     allowExitOnIdle: true
 });
 
-
-pool.query("SELECT NOW()", (err, res) =>{
-    if (err){
-        console.log("Error al conectar con DB", err);
+pool.query("SELECT NOW()", (err, res) => {
+    if (err) {
+        console.error("Error al conectar con la base de datos:", err);
     } else {
-        console.log("DB ready to work", res.rows[0].now);
-    };
+        console.log("Conexión exitosa a la base de datos:", res.rows[0].now);
+    }
 });
-
 
 export default pool;

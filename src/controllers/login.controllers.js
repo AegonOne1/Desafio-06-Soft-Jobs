@@ -1,47 +1,51 @@
 import { findUserByEmail, createUser } from "../models/login.models.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
-const createNewUser = async (req,res) =>{
-    const {email, password, rol, lenguage} = req.body;
+const createNewUser = async (req, res) => {
+    const { email, password, rol, lenguage } = req.body;
     try {
-        // VERIFICADOR DE USUARIO EXISTENTE
-        const createdUser = await findUserByEmail(email);
-        if (createdUser){
-            return res.status(400).json({ error: "Email ya registrado, reintete con otro"})
+        // Verificar si el usuario ya existe
+        const existingUser = await findUserByEmail(email);
+        if (existingUser) {
+            return res.status(400).json({ error: "Email ya registrado, inténtelo con otro" });
         }
 
-        // VERIFICADOR DE DATOS DEL USUARIO
-        if (!email || !password || !rol || !lenguage){
-            return res.status(400).json({error: "Todos los campos requeridos"})
-        };
+        // Verificar que todos los campos requeridos estén presentes
+        if (!email || !password || !rol || !lenguage) {
+            return res.status(400).json({ error: "Todos los campos son requeridos" });
+        }
 
-        const newUser = await createUser(user);
-        res.status(201).json({ user: newUser});
-        
+        // Crear nuevo usuario
+        const newUser = await createUser({ email, password, rol, lenguage });
+        res.status(201).json({ user: newUser });
     } catch (error) {
-        res.status(400).json(error.message);
+        res.status(400).json({ error: error.message });
     }
 };
 
-const loginUser = async (req, res) =>{
+const loginUser = async (req, res) => {
     try {
-        const {email, password} = req.body;
+        const { email, password } = req.body;
 
+        // Buscar usuario por email
         const user = await findUserByEmail(email);
-        if (!user){
-            return res.status(400).json({ error: "Usuario invalido"});
+        if (!user) {
+            return res.status(400).json({ error: "Usuario inválido" });
         }
 
-        const loginOn = bcrypt.compareSync(password, user.password);
-        if(!loginOn){
-            return res.status(400).json({ error: "Contraseña incorrecta"});
+        // Comparar contraseñas
+        const passwordMatch = bcrypt.compareSync(password, user.password);
+        if (!passwordMatch) {
+            return res.status(400).json({ error: "Contraseña incorrecta" });
         }
 
-        const token = jwt.sign({email: user.email }, "secret_pass", {expiresIn: "1h"});
-        res.json({token});
+        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || "default_secret", { expiresIn: "1h" });
+        res.json({ token });
     } catch (error) {
-        res.status(500).json({ error: error.message});
+        res.status(500).json({ error: error.message });
     }
-}
+};
 
 const getAuthenticatedUser = async (req, res) => {
     try {
@@ -49,7 +53,7 @@ const getAuthenticatedUser = async (req, res) => {
         const user = await findUserByEmail(email);
 
         if (!user) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ error: "Usuario no encontrado" });
         }
 
         res.json({ user });
@@ -59,4 +63,4 @@ const getAuthenticatedUser = async (req, res) => {
     }
 };
 
-export {createNewUser, loginUser,  getAuthenticatedUser}
+export { createNewUser, loginUser, getAuthenticatedUser };

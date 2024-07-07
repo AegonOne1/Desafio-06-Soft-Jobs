@@ -1,19 +1,26 @@
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
-const authenMiddleware = (req, res, next) =>{
-    const token  = req.header("Authorizacion");
+const authenMiddleware = (req, res, next) => {
+    const token = req.header("Authorization");
 
-    if (!token){
-        return res.status(401).json({ error: "No se proporciona ningun token"});
+    if (!token) {
+        return res.status(401).json({ error: "No se proporciona ningún token" });
     }
 
     try {
-        const decodificado = jwt.verify(token, "secret_pass");
-        req.user = decodificado
+        const secretKey = process.env.JWT_SECRET || "default_secret";
+        console.log("Token recibido:", token);
+
+        const decoded = jwt.verify(token, secretKey);
+        console.log("Token decodificado:", decoded);
+
+        req.user = decoded;
         next();
     } catch (error) {
-        res.status(401).json({ error: "Token invalido"});
+        console.error("Error al verificar el token:", error);
+        res.status(401).json({ error: "Token inválido" });
     }
-}
+};
 
-export {authenMiddleware}
+
+export { authenMiddleware };
