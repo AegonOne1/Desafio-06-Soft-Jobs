@@ -5,13 +5,13 @@ import { authenMiddleware } from "../middleware/authenMiddleware.js";
 
 const router = express.Router();
 
-// Ruta para crear un nuevo usuario
+// RUTA PARA CREAR USUARIO
 router.post("/usuarios", createNewUser);
 
-// Ruta para iniciar sesión
+// RUTA PARA INICIAR SESION 
 router.post("/login", loginUser);
 
-// Ruta para obtener información de usuarios autenticados, con autenticación requerida
+// RUTA PARA OBTENER AUTHENTIFICACION
 router.get("/usuarios", authenMiddleware, getAuthenticatedUser);
 
 export default router;

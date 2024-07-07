@@ -5,18 +5,18 @@ import bcrypt from "bcryptjs";
 const createNewUser = async (req, res) => {
     const { email, password, rol, lenguage } = req.body;
     try {
-        // Verificar si el usuario ya existe
+        // VERIFICAR USUARIO
         const existingUser = await findUserByEmail(email);
         if (existingUser) {
             return res.status(400).json({ error: "Email ya registrado, inténtelo con otro" });
         }
 
-        // Verificar que todos los campos requeridos estén presentes
+        // VERIFICAR TODOS LOS CAMPOS
         if (!email || !password || !rol || !lenguage) {
             return res.status(400).json({ error: "Todos los campos son requeridos" });
         }
 
-        // Crear nuevo usuario
+        // CREAR NUEVO USUARIO
         const newUser = await createUser({ email, password, rol, lenguage });
         res.status(201).json({ user: newUser });
     } catch (error) {
@@ -28,13 +28,13 @@ const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Buscar usuario por email
+        // BUSCAR USUARIO POR CORREO
         const user = await findUserByEmail(email);
         if (!user) {
             return res.status(400).json({ error: "Usuario inválido" });
         }
 
-        // Comparar contraseñas
+        // COMPARAR CONTRASEÑA
         const passwordMatch = bcrypt.compareSync(password, user.password);
         if (!passwordMatch) {
             return res.status(400).json({ error: "Contraseña incorrecta" });
