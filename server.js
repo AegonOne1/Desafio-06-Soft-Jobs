@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import router from "./src/routes/login.routes.js";
+import userRouter from "./src/routes/login.routes.js";
 import 'dotenv/config';
 
 
@@ -17,7 +17,7 @@ app.use(cors());
 
 
 //ROUTER
-app.use('/usuarios', router);
+app.use('/', userRouter);
 
 
 //SERVER ON

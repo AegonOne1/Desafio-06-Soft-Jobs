@@ -1,10 +1,8 @@
 import { findUserByEmail, createUser } from "../models/login.models.js";
 
 const createNewUser = async (req,res) =>{
+    const {email, password, rol, lenguage} = req.body;
     try {
-        const {user} = req.body;
-        const {email, password, rol, lenguage} = user;
-
         // VERIFICADOR DE USUARIO EXISTENTE
         const createdUser = await findUserByEmail(email);
         if (createdUser){
@@ -45,4 +43,20 @@ const loginUser = async (req, res) =>{
     }
 }
 
-export {createNewUser, loginUser}
+const getAuthenticatedUser = async (req, res) => {
+    try {
+        const { email } = req.user;
+        const user = await findUserByEmail(email);
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.json({ user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+export {createNewUser, loginUser,  getAuthenticatedUser}
